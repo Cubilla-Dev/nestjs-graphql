@@ -1,0 +1,20 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Todo {
+  id: Int!
+  description: String!
+  done: Boolean!
+}
+
+type Query {
+  """Mi primer hola mundo en gralhql"""
+  hello: String!
+  numeroRandon: Float!
+  randomFormZeroTo(to: Int): Int!
+
+  """vas a llamar a toda la data"""
+  todos: [Todo!]!
+  oneTodo(id: Int!): Todo!
+}
