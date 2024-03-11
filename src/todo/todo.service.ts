@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Todo } from './entity/todo.entity';
 import { UpdateTodoInput, CreateTodoInput } from './dto/inputs';
+import { StatusArgs } from './dto/args/status.args'
 
 @Injectable()
 export class TodoService {
@@ -11,9 +12,27 @@ export class TodoService {
     { id: 3, description: 'Piedra del Poder', done: false },
   ]
 
+  get totalTodos(){
+    return this.todos.length;
+  }
+
+  get pedingTodos(){
+    return this.todos.filter( todo => todo.done === false).length;
+  }
+
+  get completedTodos(){
+    return this.todos.filter( todo => todo.done === true).length;
+  }
+
   //lo que vamos a devolver
-  findAll(): Todo[]{
+  findAll( statusArgs: StatusArgs ): Todo[]{
+    const { status } = statusArgs;
+    if(status !== undefined){
+      const todo = this.todos.filter( todo => todo.done === status )
+      return todo;
+    }
     return this.todos;
+    
   }
 
   findOne(id: number): Todo{
@@ -33,28 +52,30 @@ export class TodoService {
     this.todos.push( todo );
 
     return todo;
-}
-update( id: number, updateTodoInput: UpdateTodoInput ) {
-  const { description, done } = updateTodoInput;
-  const todoToUpdate = this.findOne( id );
+  }
 
-  if ( description ) todoToUpdate.description = description;
-  if ( done !== undefined ) todoToUpdate.done = done;
+  update( id: number, updateTodoInput: UpdateTodoInput ) {
+    const { description, done } = updateTodoInput;
+    const todoToUpdate = this.findOne( id );
 
-  this.todos = this.todos.map( todo => {
-      return ( todo.id === id ) ? todoToUpdate : todo;
-  });
+    if ( description ) todoToUpdate.description = description;
+    if ( done !== undefined ) todoToUpdate.done = done;
 
-  return todoToUpdate;
+    this.todos = this.todos.map( todo => {
+        return ( todo.id === id ) ? todoToUpdate : todo;
+    });
 
-}
+    return todoToUpdate;
 
-delete( id: number ):Boolean {
-  const todo = this.findOne( id );
+  }
 
-  this.todos = this.todos.filter( todo => todo.id !== id );
+  delete( id: number ):Boolean {
+    const todo = this.findOne( id );
 
-  return true;
-}
+    this.todos = this.todos.filter( todo => todo.id !== id );
+
+    return true;
+  }
+
 
 }

@@ -8,6 +8,14 @@ type Todo {
   done: Boolean!
 }
 
+"""Todo quick aggregations"""
+type AggregationsType {
+  total: Int!
+  pending: Int!
+  completed: Int!
+  totalTodosCompleted: Int! @deprecated(reason: "Most use completed instead")
+}
+
 type Query {
   """Mi primer hola mundo en gralhql"""
   hello: String!
@@ -15,8 +23,12 @@ type Query {
   randomFormZeroTo(to: Int): Int!
 
   """vas a llamar a toda la data"""
-  todos: [Todo!]!
+  todos(status: Boolean): [Todo!]!
   oneTodo(id: Int!): Todo!
+  totalTodos: Int!
+  pedingTodos: Int!
+  completeTodos: Int!
+  aggregations: AggregationsType!
 }
 
 type Mutation {
