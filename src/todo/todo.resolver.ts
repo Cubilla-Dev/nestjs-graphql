@@ -1,7 +1,9 @@
-import { Args, Int, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Todo } from './entity/todo.entity';
 import { TodoService } from './todo.service';
+import { CreateTodoInput, UpdateTodoInput } from './dto/inputs';
 
+//le decimos en que vamos a trabajar para que sea mas especifico
 @Resolver()
 export class TodoResolver {
 
@@ -25,14 +27,28 @@ export class TodoResolver {
     return this.todoService.findOne(id)
   }
 
-  createTodo(){
-
+  @Mutation( () => Todo, { name: 'createTodo' })
+  createTodo(
+    //el primer create es lo que vas a mandar para que vean seria el typeinput personalizado
+    //el segundo seria el nombre que le pones a la data que vendra para usar en la funcion
+    //el tercero es typescript para decir que tipo de datos es 
+      @Args('createTodoInput') createTodoInput: CreateTodoInput
+  ) {
+      return this.todoService.create( createTodoInput );
   }
 
-  updateTodo(){}
+  @Mutation( () => Todo, { name: 'updateTodo' })
+  updateTodo(
+    @Args('updateTodoInput') updateTodoInput: UpdateTodoInput
+  ){
+    return this.todoService.update(updateTodoInput.id, updateTodoInput );
+  }
 
-  removeTodo(){
-
+  @Mutation( () => Boolean)
+  removeTodo(
+    @Args('id',  { type: () => Int}) id: number
+  ){
+    return this.todoService.delete(id);
   }
 
 
